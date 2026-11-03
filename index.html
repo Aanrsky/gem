@@ -1,33 +1,937 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tangkap Koin</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Flappy Bird</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #222;
+
+    font-family: Arial, sans-serif;
+
+    overflow: hidden;
+}
+
+#game {
+    position: relative;
+
+    width: 400px;
+    height: 600px;
+
+    overflow: hidden;
+
+    border: 4px solid #111;
+
+    background:
+        linear-gradient(
+            #70c5ce 0%,
+            #70c5ce 82%,
+            #ded895 82%,
+            #ded895 100%
+        );
+}
+
+/* =========================
+   AWAN
+========================= */
+
+.cloud {
+    position: absolute;
+
+    width: 80px;
+    height: 25px;
+
+    background: white;
+
+    border-radius: 30px;
+
+    opacity: 0.8;
+}
+
+.cloud::before,
+.cloud::after {
+    content: "";
+
+    position: absolute;
+
+    background: white;
+
+    border-radius: 50%;
+}
+
+.cloud::before {
+    width: 35px;
+    height: 35px;
+
+    left: 15px;
+    top: -15px;
+}
+
+.cloud::after {
+    width: 45px;
+    height: 45px;
+
+    right: 10px;
+    top: -20px;
+}
+
+.cloud1 {
+    top: 80px;
+    left: 50px;
+}
+
+.cloud2 {
+    top: 180px;
+    left: 280px;
+}
+
+/* =========================
+   BIRD
+========================= */
+
+#bird {
+    position: absolute;
+
+    width: 38px;
+    height: 30px;
+
+    background: #ffd21f;
+
+    border-radius: 50%;
+
+    z-index: 10;
+
+    left: 80px;
+    top: 280px;
+
+    transform-origin: center;
+}
+
+#bird::before {
+    content: "";
+
+    position: absolute;
+
+    width: 13px;
+    height: 9px;
+
+    background: #e9b900;
+
+    border-radius: 50%;
+
+    left: 5px;
+    top: 17px;
+
+    transform: rotate(-15deg);
+}
+
+#bird::after {
+    content: "";
+
+    position: absolute;
+
+    width: 13px;
+    height: 8px;
+
+    background: #f28c28;
+
+    left: 30px;
+    top: 11px;
+
+    border-radius: 2px;
+}
+
+/* Mata */
+
+.eye {
+    position: absolute;
+
+    width: 9px;
+    height: 9px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    right: 6px;
+    top: 5px;
+}
+
+.eye::after {
+    content: "";
+
+    position: absolute;
+
+    width: 4px;
+    height: 4px;
+
+    background: black;
+
+    border-radius: 50%;
+
+    right: 1px;
+    top: 2px;
+}
+
+/* =========================
+   PIPES
+========================= */
+
+.pipe {
+    position: absolute;
+
+    width: 65px;
+
+    background: #55b83e;
+
+    border: 3px solid #368c2c;
+
+    z-index: 5;
+}
+
+.pipe::before {
+    content: "";
+
+    position: absolute;
+
+    width: 75px;
+    height: 25px;
+
+    background: #55b83e;
+
+    border: 3px solid #368c2c;
+
+    left: -8px;
+}
+
+.pipe.top {
+    top: 0;
+}
+
+.pipe.top::before {
+    bottom: -25px;
+}
+
+.pipe.bottom {
+    bottom: 0;
+}
+
+.pipe.bottom::before {
+    top: -25px;
+}
+
+/* =========================
+   UI
+========================= */
+
+#score {
+    position: absolute;
+
+    top: 25px;
+    left: 0;
+
+    width: 100%;
+
+    text-align: center;
+
+    color: white;
+
+    font-size: 48px;
+
+    font-weight: bold;
+
+    text-shadow:
+        3px 3px 0 #555;
+
+    z-index: 20;
+}
+
+#startScreen,
+#gameOverScreen {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: rgba(0,0,0,0.25);
+
+    z-index: 50;
+
+    color: white;
+
+    text-align: center;
+}
+
+#gameOverScreen {
+    display: none;
+}
+
+.title {
+    font-size: 42px;
+
+    font-weight: bold;
+
+    text-shadow:
+        3px 3px 0 #555;
+
+    margin-bottom: 20px;
+}
+
+button {
+    border: none;
+
+    padding: 14px 30px;
+
+    border-radius: 10px;
+
+    background: #f5a623;
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 0 #b87300;
+}
+
+button:active {
+    transform: translateY(3px);
+
+    box-shadow:
+        0 1px 0 #b87300;
+}
+
+.hint {
+    margin-top: 15px;
+
+    font-size: 15px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 450px) {
+
+    #game {
+        width: 100vw;
+        height: 100vh;
+
+        border: none;
+    }
+
+}
+
+</style>
 </head>
+
 <body>
 
-    <div class="game-container">
-        <h1>🪙 Tangkap Koin</h1>
+<div id="game">
 
-        <div class="info">
-            <span>Skor: <b id="score">0</b></span>
-            <span>Waktu: <b id="time">30</b></span>
-        </div>
+    <!-- AWAN -->
 
-        <div id="gameArea">
-            <div id="player">🧙</div>
-            <div id="coin">🪙</div>
-        </div>
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
 
-        <button id="startButton">Mulai Game</button>
 
-        <p class="control">
-            🎮 Gunakan <b>W A S D</b> atau <b>tombol panah</b> untuk bergerak
-        </p>
+    <!-- SKOR -->
+
+    <div id="score">0</div>
+
+
+    <!-- BURUNG -->
+
+    <div id="bird">
+
+        <div class="eye"></div>
+
     </div>
 
-    <script src="script.js"></script>
+
+    <!-- START -->
+
+    <div id="startScreen">
+
+        <div class="title">
+            🐤 Flappy Bird
+        </div>
+
+        <button onclick="startGame()">
+            Mulai Game
+        </button>
+
+        <div class="hint">
+            Tekan SPASI / klik layar untuk terbang
+        </div>
+
+    </div>
+
+
+    <!-- GAME OVER -->
+
+    <div id="gameOverScreen">
+
+        <div class="title">
+            GAME OVER
+        </div>
+
+        <div id="finalScore"
+             style="font-size:25px;margin-bottom:20px;">
+            Skor: 0
+        </div>
+
+        <button onclick="startGame()">
+            Main Lagi
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================
+   FLAPPY BIRD
+===================================== */
+
+const game =
+    document.getElementById("game");
+
+const bird =
+    document.getElementById("bird");
+
+const scoreText =
+    document.getElementById("score");
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const gameOverScreen =
+    document.getElementById("gameOverScreen");
+
+const finalScore =
+    document.getElementById("finalScore");
+
+
+let birdY = 280;
+
+let velocity = 0;
+
+let gravity = 0.45;
+
+let jumpPower = -7;
+
+let gameRunning = false;
+
+let score = 0;
+
+let pipes = [];
+
+let lastPipeTime = 0;
+
+let animation;
+
+
+/* =====================================
+   MULAI GAME
+===================================== */
+
+function startGame() {
+
+    cancelAnimationFrame(animation);
+
+    // Reset burung
+
+    birdY = 280;
+
+    velocity = 0;
+
+    bird.style.top = birdY + "px";
+
+    bird.style.transform =
+        "rotate(0deg)";
+
+
+    // Reset skor
+
+    score = 0;
+
+    scoreText.innerText = "0";
+
+
+    // Hapus pipa lama
+
+    pipes.forEach(pipe => {
+
+        pipe.top.remove();
+
+        pipe.bottom.remove();
+
+    });
+
+    pipes = [];
+
+
+    // UI
+
+    startScreen.style.display =
+        "none";
+
+    gameOverScreen.style.display =
+        "none";
+
+
+    gameRunning = true;
+
+    lastPipeTime = Date.now();
+
+
+    // Buat pipa pertama
+
+    createPipe();
+
+
+    animation =
+        requestAnimationFrame(loop);
+
+}
+
+
+/* =====================================
+   BURUNG TERBANG
+===================================== */
+
+function flap() {
+
+    if (!gameRunning) {
+
+        return;
+
+    }
+
+    velocity = jumpPower;
+
+}
+
+
+/* =====================================
+   BUAT PIPA
+===================================== */
+
+function createPipe() {
+
+    const gap = 160;
+
+    const minHeight = 70;
+
+    const maxHeight =
+        game.clientHeight -
+        gap -
+        100;
+
+    const topHeight =
+        Math.random() *
+        (maxHeight - minHeight)
+        + minHeight;
+
+
+    // PIPA ATAS
+
+    const topPipe =
+        document.createElement("div");
+
+    topPipe.className =
+        "pipe top";
+
+    topPipe.style.height =
+        topHeight + "px";
+
+    topPipe.style.left =
+        game.clientWidth + "px";
+
+
+    // PIPA BAWAH
+
+    const bottomPipe =
+        document.createElement("div");
+
+    bottomPipe.className =
+        "pipe bottom";
+
+    bottomPipe.style.height =
+        (
+            game.clientHeight -
+            topHeight -
+            gap
+        ) + "px";
+
+    bottomPipe.style.left =
+        game.clientWidth + "px";
+
+
+    game.appendChild(topPipe);
+
+    game.appendChild(bottomPipe);
+
+
+    pipes.push({
+
+        x: game.clientWidth,
+
+        top: topPipe,
+
+        bottom: bottomPipe,
+
+        passed: false
+
+    });
+
+}
+
+
+/* =====================================
+   UPDATE GAME
+===================================== */
+
+function update() {
+
+    // Gravitasi
+
+    velocity += gravity;
+
+    birdY += velocity;
+
+
+    // Posisi burung
+
+    bird.style.top =
+        birdY + "px";
+
+
+    // Rotasi burung
+
+    let rotation =
+        Math.min(
+            Math.max(
+                velocity * 4,
+                -25
+            ),
+            90
+        );
+
+    bird.style.transform =
+        "rotate(" +
+        rotation +
+        "deg)";
+
+
+    // Gerakkan pipa
+
+    for (let i = pipes.length - 1;
+         i >= 0;
+         i--) {
+
+        const pipe =
+            pipes[i];
+
+
+        pipe.x -= 2.7;
+
+
+        pipe.top.style.left =
+            pipe.x + "px";
+
+        pipe.bottom.style.left =
+            pipe.x + "px";
+
+
+        // Tambah skor
+
+        if (
+            !pipe.passed &&
+            pipe.x + 65 < 80
+        ) {
+
+            pipe.passed = true;
+
+            score++;
+
+            scoreText.innerText =
+                score;
+
+        }
+
+
+        // Hapus pipa
+
+        if (
+            pipe.x < -100
+        ) {
+
+            pipe.top.remove();
+
+            pipe.bottom.remove();
+
+            pipes.splice(i, 1);
+
+        }
+
+    }
+
+
+    // Buat pipa baru
+
+    const now = Date.now();
+
+    if (
+        now - lastPipeTime > 1700
+    ) {
+
+        createPipe();
+
+        lastPipeTime = now;
+
+    }
+
+
+    // Cek tabrakan
+
+    checkCollision();
+
+}
+
+
+/* =====================================
+   TABRAKAN
+===================================== */
+
+function checkCollision() {
+
+    const birdLeft = 80;
+
+    const birdRight =
+        birdLeft + 38;
+
+    const birdTop =
+        birdY;
+
+    const birdBottom =
+        birdY + 30;
+
+
+    // Tanah
+
+    if (
+        birdBottom >=
+        game.clientHeight - 35
+    ) {
+
+        gameOver();
+
+        return;
+
+    }
+
+
+    // Langit
+
+    if (
+        birdTop <= 0
+    ) {
+
+        gameOver();
+
+        return;
+
+    }
+
+
+    // Pipa
+
+    for (const pipe of pipes) {
+
+        const pipeLeft =
+            pipe.x;
+
+        const pipeRight =
+            pipe.x + 65;
+
+
+        const topHeight =
+            parseFloat(
+                pipe.top.style.height
+            );
+
+
+        const bottomTop =
+            game.clientHeight -
+            parseFloat(
+                pipe.bottom.style.height
+            );
+
+
+        const horizontal =
+            birdRight > pipeLeft &&
+            birdLeft < pipeRight;
+
+
+        const vertical =
+            birdTop < topHeight ||
+            birdBottom > bottomTop;
+
+
+        if (
+            horizontal &&
+            vertical
+        ) {
+
+            gameOver();
+
+            return;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   GAME OVER
+===================================== */
+
+function gameOver() {
+
+    if (!gameRunning) {
+
+        return;
+
+    }
+
+
+    gameRunning = false;
+
+
+    cancelAnimationFrame(
+        animation
+    );
+
+
+    finalScore.innerText =
+        "Skor: " + score;
+
+
+    gameOverScreen.style.display =
+        "flex";
+
+}
+
+
+/* =====================================
+   GAME LOOP
+===================================== */
+
+function loop() {
+
+    if (!gameRunning) {
+
+        return;
+
+    }
+
+
+    update();
+
+
+    animation =
+        requestAnimationFrame(loop);
+
+}
+
+
+/* =====================================
+   KONTROL
+===================================== */
+
+// Keyboard
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.code === "Space" ||
+            event.code === "ArrowUp"
+        ) {
+
+            event.preventDefault();
+
+            flap();
+
+        }
+
+    }
+);
+
+
+// Mouse
+
+game.addEventListener(
+    "mousedown",
+    function() {
+
+        flap();
+
+    }
+);
+
+
+// Touch HP
+
+game.addEventListener(
+    "touchstart",
+    function(event) {
+
+        event.preventDefault();
+
+        flap();
+
+    },
+    {
+        passive: false
+    }
+);
+
+</script>
+
 </body>
 </html>
