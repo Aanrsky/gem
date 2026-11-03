@@ -1,82 +1,33 @@
-* {
-    box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tangkap Koin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #111827;
-    font-family: Arial, sans-serif;
-    color: white;
-}
+    <div class="game-container">
+        <h1>🪙 Tangkap Koin</h1>
 
-.game-container {
-    width: 95%;
-    max-width: 800px;
-    text-align: center;
-}
+        <div class="info">
+            <span>Skor: <b id="score">0</b></span>
+            <span>Waktu: <b id="time">30</b></span>
+        </div>
 
-h1 {
-    margin-bottom: 10px;
-}
+        <div id="gameArea">
+            <div id="player">🧙</div>
+            <div id="coin">🪙</div>
+        </div>
 
-.info {
-    display: flex;
-    justify-content: space-between;
-    background: #1f2937;
-    padding: 12px 20px;
-    border-radius: 10px 10px 0 0;
-    font-size: 20px;
-}
+        <button id="startButton">Mulai Game</button>
 
-#gameArea {
-    position: relative;
-    width: 100%;
-    height: 500px;
-    overflow: hidden;
-    background:
-        linear-gradient(#166534 2px, transparent 2px),
-        linear-gradient(90deg, #166534 2px, transparent 2px),
-        #14532d;
-    background-size: 40px 40px;
-    border: 4px solid #374151;
-}
+        <p class="control">
+            🎮 Gunakan <b>W A S D</b> atau <b>tombol panah</b> untuk bergerak
+        </p>
+    </div>
 
-#player {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    font-size: 45px;
-    transform: translate(-50%, -50%);
-    user-select: none;
-}
-
-#coin {
-    position: absolute;
-    font-size: 35px;
-    user-select: none;
-    display: none;
-}
-
-button {
-    margin-top: 15px;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 10px;
-    background: #f59e0b;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #d97706;
-}
-
-.control {
-    color: #d1d5db;
-}
+    <script src="script.js"></script>
+</body>
+</html>
