@@ -1,141 +1,80 @@
-const gameArea = document.getElementById("gameArea");
-const player = document.getElementById("player");
-const coin = document.getElementById("coin");
-
-const scoreText = document.getElementById("score");
-const timeText = document.getElementById("time");
-const startButton = document.getElementById("startButton");
-
-let playerX = 0;
-let playerY = 0;
-
-let score = 0;
-let time = 30;
-
-let gameRunning = false;
-let timer;
-
-const speed = 6;
-
-function startGame() {
-    score = 0;
-    time = 30;
-
-    scoreText.textContent = score;
-    timeText.textContent = time;
-
-    gameRunning = true;
-
-    playerX = gameArea.clientWidth / 2 - player.offsetWidth / 2;
-    playerY = gameArea.clientHeight / 2 - player.offsetHeight / 2;
-
-    updatePlayer();
-
-    moveCoin();
-
-    startButton.textContent = "Game Berjalan...";
-
-    clearInterval(timer);
-
-    timer = setInterval(() => {
-        time--;
-
-        timeText.textContent = time;
-
-        if (time <= 0) {
-            endGame();
-        }
-    }, 1000);
+* {
+    box-sizing: border-box;
 }
 
-function endGame() {
-    gameRunning = false;
+body {
+    margin: 0;
+    min-height: 100vh;
 
-    clearInterval(timer);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    coin.style.display = "none";
+    background: #87ceeb;
 
-    startButton.textContent = "Main Lagi";
-
-    alert("Game selesai!\nSkor kamu: " + score);
+    font-family: Arial, sans-serif;
 }
 
-function updatePlayer() {
-    player.style.left = playerX + "px";
-    player.style.top = playerY + "px";
+.game-wrapper {
+    text-align: center;
 }
 
-function moveCoin() {
-    const maxX = gameArea.clientWidth - coin.offsetWidth;
-    const maxY = gameArea.clientHeight - coin.offsetHeight;
-
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
-
-    coin.style.left = x + "px";
-    coin.style.top = y + "px";
-    coin.style.display = "block";
+h1 {
+    margin: 10px;
+    color: #ffffff;
+    text-shadow: 2px 2px 3px #555;
 }
 
-function checkCollision() {
-    const playerRect = player.getBoundingClientRect();
-    const coinRect = coin.getBoundingClientRect();
+.score {
+    margin-bottom: 8px;
 
-    if (
-        playerRect.left < coinRect.right &&
-        playerRect.right > coinRect.left &&
-        playerRect.top < coinRect.bottom &&
-        playerRect.bottom > coinRect.top
-    ) {
-        score++;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
 
-        scoreText.textContent = score;
-
-        moveCoin();
-    }
+    text-shadow: 2px 2px 3px #555;
 }
 
-document.addEventListener("keydown", (event) => {
-    if (!gameRunning) return;
+canvas {
+    display: block;
 
-    const key = event.key.toLowerCase();
+    width: 400px;
+    max-width: 95vw;
+    height: 600px;
+    max-height: 75vh;
 
-    if (
-        key === "arrowup" ||
-        key === "w"
-    ) {
-        playerY -= speed;
-    }
+    background: #70c5ce;
 
-    if (
-        key === "arrowdown" ||
-        key === "s"
-    ) {
-        playerY += speed;
-    }
+    border: 4px solid #333;
+    border-radius: 8px;
 
-    if (
-        key === "arrowleft" ||
-        key === "a"
-    ) {
-        playerX -= speed;
-    }
+    margin: auto;
+}
 
-    if (
-        key === "arrowright" ||
-        key === "d"
-    ) {
-        playerX += speed;
-    }
+button {
+    margin-top: 15px;
 
-    const maxX = gameArea.clientWidth - player.offsetWidth;
-    const maxY = gameArea.clientHeight - player.offsetHeight;
+    padding: 12px 30px;
 
-    playerX = Math.max(0, Math.min(playerX, maxX));
-    playerY = Math.max(0, Math.min(playerY, maxY));
+    border: none;
+    border-radius: 10px;
 
-    updatePlayer();
-    checkCollision();
-});
+    background: #f5a623;
+    color: white;
 
-startButton.addEventListener("click", startGame);
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background: #d88900;
+}
+
+p {
+    color: white;
+    font-size: 15px;
+
+    text-shadow: 1px 1px 2px #555;
+}
